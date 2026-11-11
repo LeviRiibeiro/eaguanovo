@@ -1,46 +1,48 @@
-![caixa e-água](https://raw.githubusercontent.com/lifefurb/caixaeagua/master/Imagens/LogoCaixa-e-Agua.jpg)
-# Projeto Caixa de Areia Interativa - Universidade Regional de Blumenau (FURB)
+# Caixa-e-Água — instalador para Linux Mint 22.3
 
-## Sobre o Projeto
+Este repositório preserva o projeto Caixa-e-Água da FURB e acrescenta um
+instalador para Linux Mint 22.3, baseado no Ubuntu 24.04.
 
-As informações completas sobre este projeto podem ser encontradas em nosso blog: [caixae-agua.blogspot.com.br](http://caixae-agua.blogspot.com.br/)
-
-### Este Projeto utiliza como base: ___The Augmented Reality Sandbox___
-![KeckCAVESLogo](https://raw.githubusercontent.com/lifefurb/caixaeagua/master/Imagens/KeckCAVESLogoSideways.png)
-
-The Augmented Reality Sandbox was developed by the UC Davis W.M. Keck Center for Active Visualization in the Earth Sciences (KeckCAVES, http://www.keckcaves.org), supported by the National Science Foundation under Grant No. DRL 1114663.
-For more information, please visit https://arsandbox.ucdavis.edu.
+O instalador original de 2016 não funciona nessa distribuição: cita pacotes
+removidos, depende de um comportamento antigo do GCC e continua executando
+após falhas. O script novo baixa o pacote de lançamento original, valida sua
+soma SHA-256, usa dependências atuais e para imediatamente em caso de erro.
 
 ## Instalação
 
-1. Faça o download do arquivo de instalação [aqui](https://github.com/lifefurb/caixaeagua/releases/download/v1.0/instalacao-caixa-e-agua.tar.gz).
-2. Descompacte o arquivo para a pasta do seu usuário (Pasta pessoal de... ).
-3. Entre na pasta **instalacao-caixa-e-agua**.
-4. Clique com o botão direito do mouse em uma **"área branca"** sem selecionar nenhum item.
-5. No menu de contexto selecione a opção **abrir no terminal**.
-6. Copie e cole os seguintes comandos no terminal: 
+No computador Linux, abra o terminal e execute:
 
-  ### 1. Para instalar o Vrui:
+```bash
+git clone https://github.com/LeviRiibeiro/eaguanovo.git
+cd eaguanovo
+bash scripts/install-mint-22.sh
+```
 
-  ```bash
-  ./Instalar-Vrui.sh 
-  ```
+O processo pede a senha de administrador para instalar as dependências e a
+regra de acesso ao Kinect. Ele baixa cerca de 150 MB e pode demorar bastante
+ao compilar Vrui, Kinect e SARndbox.
 
-  ### 2. Para instalar o Kinect:
+Ao terminar, execute:
 
-  ```bash
-  ./Instalar-Kinect.sh
-  ```
+```bash
+~/.local/bin/Caixa-e-Agua
+```
 
-  ### 3. Para instalar o SARndbox:
+ou abra **Caixa-e-Agua** pelo menu, se `~/.local/bin` estiver no `PATH`.
 
-  ```bash
-  ./Instalar-SARndbox.sh
-  ```
+## Observações
 
-  ### 4. Para instalar o Caixa e-água:
-  ```bash
-  ./Instalar-Caixa-e-Agua.sh
-  ```
-7. Copie e cole o arquivo **Caixa-e-Agua.sh** para a área de trabalho.
-8. Execute o arquivo **Caixa-e-Agua.sh**.
+- O script é voltado para o Kinect de primeira geração usado pelo projeto.
+- A instalação é feita em `~/Caixa-e-Agua`, `~/Vrui-3.1` e
+  `~/.cache/eaguanovo`; não depende do pendrive nem do diretório a partir do
+  qual o comando foi executado.
+- Para não apagar configurações ou materiais existentes, a instalação é
+  interrompida se `~/Caixa-e-Agua` já existir.
+- O hardware (Kinect, projetor e calibração) ainda precisa ser validado no
+  computador de destino.
+
+## Origem
+
+Projeto original: [lifefurb/caixaeagua](https://github.com/lifefurb/caixaeagua).
+O software SARndbox e suas dependências são distribuídos sob GPL, conforme o
+projeto original.
