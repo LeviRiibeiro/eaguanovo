@@ -11,6 +11,7 @@ readonly ARCHIVE_PATH="${CACHE_HOME}/instalacao-caixa-e-agua.tar.gz"
 readonly BUNDLE_DIR="${CACHE_HOME}/bundle"
 readonly BUILD_DIR="${CACHE_HOME}/build"
 readonly VRUI_HOME="${HOME}/Vrui-3.1"
+readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 RESUME_INSTALL=0
 
 fail() {
@@ -135,6 +136,23 @@ build_caixa_helpers() {
   install -m 0755 "${source_root}/Valida_Marcadores/build/ValidarMarcadores" "${APP_HOME}/auxs/ValidarMarcadores"
 }
 
+build_caixa_interface() {
+  local source_dir="${SCRIPT_DIR}/../Sources/Caixa_v1"
+  local build_dir="${CACHE_HOME}/caixa-interface-build"
+  [[ -f "${source_dir}/Caixa_v1.pro" ]] || fail "Não foi encontrado o código-fonte da interface em ${source_dir}."
+  command -v qmake >/dev/null || fail "qmake não está disponível. Instale qtbase5-dev e tente novamente."
+
+  note "Compilando a interface Caixa_v1 com Qt atual"
+  rm -rf -- "${build_dir:?}"
+  mkdir -p -- "${build_dir}"
+  (
+    cd -- "${build_dir}"
+    qmake "${source_dir}/Caixa_v1.pro"
+    make --jobs "$(nproc)"
+    install -m 0755 Caixa_v1 "${APP_HOME}/bin/Caixa_v1"
+  )
+}
+
 install_application_files() {
   if [[ -e "${APP_HOME}" ]]; then
     [[ "${RESUME_INSTALL}" -eq 1 ]] || fail "${APP_HOME} já existe. Para preservá-la, o instalador não a sobrescreve. Se ela foi criada por uma execução anterior deste instalador, execute novamente com --resume."
@@ -170,11 +188,18 @@ create_launcher() {
 }
 
 main() {
-  if [[ "${1:-}" == "--resume" ]]; then
-    RESUME_INSTALL=1
-  elif [[ "$#" -ne 0 ]]; then
-    fail "Opção desconhecida: $1. Use sem opções ou --resume."
-  fi
+  case "${1:-}" in
+    "") ;;
+    --resume) RESUME_INSTALL=1 ;;
+    --rebuild-ui)
+      [[ -d "${APP_HOME}" ]] || fail "${APP_HOME} não existe. Execute a instalação completa primeiro."
+      build_caixa_interface
+      create_launcher
+      note "Interface recompilada"
+      exit 0
+      ;;
+    *) fail "Opção desconhecida: $1. Use sem opções, --resume ou --rebuild-ui." ;;
+  esac
 
   [[ "$(uname -s)" == "Linux" ]] || fail "Este instalador é destinado ao Linux."
   command -v sudo >/dev/null || fail "sudo não está disponível."
@@ -189,6 +214,7 @@ main() {
   build_kinect
   build_sarndbox
   build_caixa_helpers
+  build_caixa_interface
   create_launcher
 
   note "Instalação concluída"

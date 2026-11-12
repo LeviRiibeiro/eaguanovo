@@ -25,6 +25,13 @@ Se uma execução anterior desse instalador foi interrompida depois de extrair
 bash scripts/install-mint-22.sh --resume
 ```
 
+Para recompilar apenas a interface gráfica, sem refazer Vrui, Kinect e
+SARndbox, execute:
+
+```bash
+bash scripts/install-mint-22.sh --rebuild-ui
+```
+
 O processo pede a senha de administrador para instalar as dependências e a
 regra de acesso ao Kinect. Ele baixa cerca de 150 MB e pode demorar bastante
 ao compilar Vrui, Kinect e SARndbox.
