@@ -18,6 +18,13 @@ cd eaguanovo
 bash scripts/install-mint-22.sh
 ```
 
+Se uma execução anterior desse instalador foi interrompida depois de extrair
+`~/Caixa-e-Agua`, retome-a sem apagar seus arquivos com:
+
+```bash
+bash scripts/install-mint-22.sh --resume
+```
+
 O processo pede a senha de administrador para instalar as dependências e a
 regra de acesso ao Kinect. Ele baixa cerca de 150 MB e pode demorar bastante
 ao compilar Vrui, Kinect e SARndbox.

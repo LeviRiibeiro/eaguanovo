@@ -11,6 +11,7 @@ readonly ARCHIVE_PATH="${CACHE_HOME}/instalacao-caixa-e-agua.tar.gz"
 readonly BUNDLE_DIR="${CACHE_HOME}/bundle"
 readonly BUILD_DIR="${CACHE_HOME}/build"
 readonly VRUI_HOME="${HOME}/Vrui-3.1"
+RESUME_INSTALL=0
 
 fail() {
   printf '\nErro: %s\n' "$*" >&2
@@ -135,7 +136,12 @@ build_caixa_helpers() {
 }
 
 install_application_files() {
-  [[ ! -e "${APP_HOME}" ]] || fail "${APP_HOME} já existe. Para preservar seus dados, este instalador não o sobrescreve. Renomeie ou faça backup dessa pasta antes de executar novamente."
+  if [[ -e "${APP_HOME}" ]]; then
+    [[ "${RESUME_INSTALL}" -eq 1 ]] || fail "${APP_HOME} já existe. Para preservá-la, o instalador não a sobrescreve. Se ela foi criada por uma execução anterior deste instalador, execute novamente com --resume."
+    [[ -d "${APP_HOME}/auxs" && -d "${APP_HOME}/sources" ]] || fail "${APP_HOME} não tem a estrutura esperada para retomar a instalação. Renomeie ou faça backup dessa pasta antes de executar novamente."
+    note "Retomando com os arquivos da aplicação já extraídos"
+    return
+  fi
   note "Instalando arquivos do Caixa-e-Água"
   tar --extract --gzip --file "${BUNDLE_DIR}/instalacao-caixa-e-agua/Caixa-e-Agua.tar.gz" --directory "${HOME}" --no-same-owner
   [[ -d "${APP_HOME}/auxs" ]] || fail "A aplicação não foi extraída corretamente."
@@ -149,6 +155,12 @@ create_launcher() {
 }
 
 main() {
+  if [[ "${1:-}" == "--resume" ]]; then
+    RESUME_INSTALL=1
+  elif [[ "$#" -ne 0 ]]; then
+    fail "Opção desconhecida: $1. Use sem opções ou --resume."
+  fi
+
   [[ "$(uname -s)" == "Linux" ]] || fail "Este instalador é destinado ao Linux."
   command -v sudo >/dev/null || fail "sudo não está disponível."
   mkdir -p -- "${CACHE_HOME}" "${BUILD_DIR}"
