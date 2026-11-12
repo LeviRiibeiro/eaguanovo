@@ -93,6 +93,15 @@ build_kinect() {
   make --directory "${source_dir}" installudevrule
 }
 
+install_runtime_tools() {
+  local kinect_viewer="${BUILD_DIR}/Kinect-2.8-002/bin/RawKinectViewer"
+  local projector_calibrator="${APP_HOME}/sarndbox-runtime/bin/CalibrateProjector"
+  [[ -x "${kinect_viewer}" ]] || fail "Não foi encontrado ${kinect_viewer}. Execute a instalação completa antes de reparar as ferramentas."
+  [[ -x "${projector_calibrator}" ]] || fail "Não foi encontrado ${projector_calibrator}. Execute a instalação completa antes de reparar as ferramentas."
+  install -m 0755 "${kinect_viewer}" "${APP_HOME}/auxs/RawKinectViewer"
+  install -m 0755 "${projector_calibrator}" "${APP_HOME}/auxs/CalibrateProjector"
+}
+
 build_sarndbox() {
   local source_dir="${BUILD_DIR}/SARndbox-1.6"
   local runtime_dir="${APP_HOME}/sarndbox-runtime"
@@ -198,7 +207,13 @@ main() {
       note "Interface recompilada"
       exit 0
       ;;
-    *) fail "Opção desconhecida: $1. Use sem opções, --resume ou --rebuild-ui." ;;
+    --repair-tools)
+      [[ -d "${APP_HOME}" ]] || fail "${APP_HOME} não existe. Execute a instalação completa primeiro."
+      install_runtime_tools
+      note "Ferramentas de Kinect e projetor reparadas"
+      exit 0
+      ;;
+    *) fail "Opção desconhecida: $1. Use sem opções, --resume, --rebuild-ui ou --repair-tools." ;;
   esac
 
   [[ "$(uname -s)" == "Linux" ]] || fail "Este instalador é destinado ao Linux."
@@ -213,6 +228,7 @@ main() {
   build_vrui
   build_kinect
   build_sarndbox
+  install_runtime_tools
   build_caixa_helpers
   build_caixa_interface
   create_launcher

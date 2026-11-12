@@ -32,6 +32,12 @@ SARndbox, execute:
 bash scripts/install-mint-22.sh --rebuild-ui
 ```
 
+Para restaurar apenas os programas auxiliares de Kinect e projetor, execute:
+
+```bash
+bash scripts/install-mint-22.sh --repair-tools
+```
+
 O processo pede a senha de administrador para instalar as dependências e a
 regra de acesso ao Kinect. Ele baixa cerca de 150 MB e pode demorar bastante
 ao compilar Vrui, Kinect e SARndbox.
