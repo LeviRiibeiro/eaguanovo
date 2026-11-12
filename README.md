@@ -35,7 +35,8 @@ Ao terminar, execute:
 ~/.local/bin/Caixa-e-Agua
 ```
 
-ou abra **Caixa-e-Agua** pelo menu, se `~/.local/bin` estiver no `PATH`.
+Também é possível abrir **Caixa-e-Água** pelo menu de aplicativos.
+O instalador também cria o ícone **Caixa-e-Água** na Área de Trabalho.
 
 ## Observações
 

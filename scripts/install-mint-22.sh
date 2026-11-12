@@ -149,9 +149,22 @@ install_application_files() {
 
 create_launcher() {
   local launcher="${HOME}/.local/bin/Caixa-e-Agua"
+  local desktop_entry="${HOME}/.local/share/applications/Caixa-e-Agua.desktop"
+  local desktop_dir
   mkdir -p -- "${HOME}/.local/bin"
   printf '#!/usr/bin/env bash\ncd "%s/bin"\nexec ./Caixa_v1\n' "${APP_HOME}" > "${launcher}"
   chmod 0755 "${launcher}"
+
+  mkdir -p -- "${HOME}/.local/share/applications"
+  printf '[Desktop Entry]\nVersion=1.0\nType=Application\nName=Caixa-e-Água\nComment=Caixa de Areia Interativa\nExec=%s\nIcon=%s\nTerminal=false\nCategories=Education;Science;\n' \
+    "${launcher}" "${APP_HOME}/resources/logos/icone.jpg" > "${desktop_entry}"
+  chmod 0644 "${desktop_entry}"
+
+  desktop_dir="$(xdg-user-dir DESKTOP 2>/dev/null || printf '%s/Desktop' "${HOME}")"
+  mkdir -p -- "${desktop_dir}"
+  if [[ ! -e "${desktop_dir}/Caixa-e-Agua.desktop" ]]; then
+    ln --symbolic "${desktop_entry}" "${desktop_dir}/Caixa-e-Agua.desktop"
+  fi
 }
 
 main() {
