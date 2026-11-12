@@ -49,8 +49,16 @@ unpack_bundle() {
 # o arquivo de dependências ser procurado ao lado do objeto, como GCC 3+ faz.
 patch_vrui_dependency_template() {
   local definitions="$1/BuildRoot/SystemDefinitions"
+  local marshallers="$1/GL/GLMarshallers.h"
   [[ -f "${definitions}" ]] || fail "Não foi encontrado ${definitions}."
   printf '\n# Compatibilidade com GCC moderno (Mint 22 / Ubuntu 24.04).\nDEPFILETEMPLATE = '\''$(patsubst %%.o,%%.d,$@)'\''\n' >> "${definitions}"
+
+  # GCC recente não traz size_t indiretamente pelos cabeçalhos OpenGL como
+  # acontecia quando Vrui 3.1 foi lançado.
+  [[ -f "${marshallers}" ]] || fail "Não foi encontrado ${marshallers}."
+  if ! grep --quiet '^#include <cstddef>$' "${marshallers}"; then
+    sed --in-place '/^#include <GL\/GLMaterial.h>$/a#include <cstddef>' "${marshallers}"
+  fi
 }
 
 install_dependencies() {
