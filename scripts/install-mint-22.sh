@@ -151,6 +151,8 @@ create_launcher() {
   local launcher="${HOME}/.local/bin/Caixa-e-Agua"
   local desktop_entry="${HOME}/.local/share/applications/Caixa-e-Agua.desktop"
   local desktop_dir
+  [[ -f "${APP_HOME}/bin/Caixa_v1" ]] || fail "Não foi encontrado ${APP_HOME}/bin/Caixa_v1."
+  chmod 0755 "${APP_HOME}/bin/Caixa_v1"
   mkdir -p -- "${HOME}/.local/bin"
   printf '#!/usr/bin/env bash\ncd "%s/bin"\nexec ./Caixa_v1\n' "${APP_HOME}" > "${launcher}"
   chmod 0755 "${launcher}"
